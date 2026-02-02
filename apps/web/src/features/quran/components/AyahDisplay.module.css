@@ -1,0 +1,52 @@
+/**
+ * Ayah Display Styles
+ */
+
+.ayah {
+    padding: var(--space-6);
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.ayah:last-child {
+    border-bottom: none;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--color-primary);
+    color: white;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+}
+
+.reference {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+}
+
+.arabic {
+    font-family: var(--font-arabic);
+    font-size: 1.75rem;
+    line-height: var(--line-height-arabic);
+    text-align: right;
+    color: var(--color-text);
+    margin-bottom: var(--space-4);
+}
+
+.translation {
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+    margin: 0;
+}

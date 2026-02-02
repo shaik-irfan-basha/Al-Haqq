@@ -1,0 +1,13 @@
+src/app/page.tsx(40,14): error TS17008: JSX element 'section' has no corresponding closing tag.
+src/app/page.tsx(141,17): error TS1005: ')' expected.
+src/app/page.tsx(157,13): error TS1128: Declaration or statement expected.
+src/app/page.tsx(160,19): error TS1005: ';' expected.
+src/app/page.tsx(210,13): error TS1128: Declaration or statement expected.
+src/app/page.tsx(213,19): error TS1005: ';' expected.
+src/app/page.tsx(230,13): error TS1128: Declaration or statement expected.
+src/app/page.tsx(233,19): error TS1005: ';' expected.
+src/app/page.tsx(377,13): error TS1128: Declaration or statement expected.
+src/app/page.tsx(380,19): error TS1005: ';' expected.
+src/app/page.tsx(405,9): error TS1128: Declaration or statement expected.
+src/app/page.tsx(406,9): error TS1109: Expression expected.
+src/app/page.tsx(407,5): error TS1109: Expression expected.

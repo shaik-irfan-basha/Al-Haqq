@@ -1,0 +1,24 @@
+{
+    "name": "@al-haqq/ai-basira",
+    "version": "0.1.0",
+    "private": true,
+    "description": "AI Basira Engine - Islamic Knowledge Assistant with Guardrails",
+    "type": "module",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "scripts": {
+        "build": "tsc",
+        "clean": "rimraf dist",
+        "test": "vitest"
+    },
+    "dependencies": {
+        "@al-haqq/shared": "workspace:*",
+        "groq-sdk": "^0.5.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.0",
+        "rimraf": "^5.0.5",
+        "typescript": "^5.3.3",
+        "vitest": "^1.2.0"
+    }
+}

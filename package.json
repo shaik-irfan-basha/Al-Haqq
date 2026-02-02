@@ -1,0 +1,28 @@
+{
+    "name": "al-haqq",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Al-Haqq: Islamic Knowledge Platform - Quran, Hadith & AI Basira",
+    "author": "Al-Haqq Team",
+    "license": "MIT",
+    "engines": {
+        "node": ">=20.0.0",
+        "pnpm": ">=8.0.0"
+    },
+    "packageManager": "pnpm@9.0.0",
+    "scripts": {
+        "dev": "pnpm --filter @al-haqq/web dev",
+        "dev:api": "pnpm --filter @al-haqq/api dev",
+        "build": "pnpm -r build",
+        "lint": "pnpm -r lint",
+        "test": "pnpm -r test",
+        "db:migrate": "pnpm --filter @al-haqq/database migrate",
+        "db:seed": "pnpm --filter @al-haqq/database seed",
+        "clean": "pnpm -r clean && rimraf node_modules"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.0",
+        "rimraf": "^5.0.5",
+        "typescript": "^5.3.3"
+    }
+}

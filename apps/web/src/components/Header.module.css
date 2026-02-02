@@ -1,0 +1,67 @@
+/**
+ * Header Styles
+ */
+
+.header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+    background: var(--color-bg-elevated);
+    border-bottom: 1px solid var(--color-border);
+    backdrop-filter: blur(10px);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    text-decoration: none;
+    color: inherit;
+}
+
+.logoArabic {
+    font-family: var(--font-arabic);
+    font-size: var(--font-size-xl);
+    color: var(--color-primary);
+}
+
+.logoText {
+    font-weight: 600;
+    font-size: var(--font-size-lg);
+}
+
+.nav {
+    display: flex;
+    gap: var(--space-6);
+}
+
+.navLink {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    transition: color var(--transition-fast);
+}
+
+.navLink:hover {
+    color: var(--color-primary);
+}
+
+@media (max-width: 640px) {
+    .nav {
+        gap: var(--space-4);
+    }
+
+    .navLink {
+        font-size: var(--font-size-xs);
+    }
+}

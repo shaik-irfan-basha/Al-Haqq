@@ -1,0 +1,155 @@
+/**
+ * Basira Page Styles
+ */
+
+.main {
+    min-height: 100vh;
+    padding: var(--space-4);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    padding: var(--space-8) 0;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: var(--space-6);
+}
+
+.backLink {
+    display: inline-block;
+    margin-bottom: var(--space-4);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.backLink:hover {
+    color: var(--color-primary);
+}
+
+.header h1 {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--space-2);
+}
+
+.subtitle {
+    color: var(--color-text-secondary);
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.intro {
+    text-align: center;
+}
+
+.intro h2 {
+    font-family: var(--font-arabic);
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--space-4);
+    color: var(--color-primary);
+}
+
+.intro p {
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+}
+
+.guardrails {
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+}
+
+.guardrails h3 {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--space-2);
+    color: #92400e;
+}
+
+.guardrails ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: #92400e;
+}
+
+.guardrails li::before {
+    content: '•';
+    margin-right: var(--space-2);
+}
+
+@media (prefers-color-scheme: dark) {
+    .guardrails {
+        background: #422006;
+        border-color: #92400e;
+    }
+
+    .guardrails h3,
+    .guardrails ul {
+        color: #fef3c7;
+    }
+}
+
+.chatContainer {
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius-lg);
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chatPlaceholder {
+    text-align: center;
+    color: var(--color-text-muted);
+}
+
+.chatPlaceholder p:first-child {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--space-2);
+}
+
+.hint {
+    font-size: var(--font-size-sm);
+}
+
+.examples h3 {
+    margin-bottom: var(--space-4);
+    text-align: center;
+}
+
+.exampleGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+}
+
+.exampleBtn {
+    padding: var(--space-4);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-align: left;
+}
+
+.exampleBtn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+@media (max-width: 640px) {
+    .exampleGrid {
+        grid-template-columns: 1fr;
+    }
+}

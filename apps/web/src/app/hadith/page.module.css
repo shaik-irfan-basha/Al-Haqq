@@ -1,0 +1,92 @@
+/**
+ * Hadith Page Styles
+ */
+
+.main {
+    min-height: 100vh;
+    padding: var(--space-4);
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    padding: var(--space-8) 0;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: var(--space-6);
+}
+
+.backLink {
+    display: inline-block;
+    margin-bottom: var(--space-4);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.backLink:hover {
+    color: var(--color-primary);
+}
+
+.header h1 {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--space-2);
+}
+
+.subtitle {
+    color: var(--color-text-secondary);
+}
+
+/* Categories */
+.categories {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+}
+
+.category h2 {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--space-4);
+    color: var(--color-text-secondary);
+}
+
+.bookGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+}
+
+.bookCard {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-6);
+    background: var(--color-bg-elevated);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    transition: all var(--transition-fast);
+    text-decoration: none;
+    color: inherit;
+}
+
+.bookCard:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.bookArabic {
+    font-family: var(--font-arabic);
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--space-2);
+    color: var(--color-primary);
+}
+
+.bookEnglish {
+    font-size: var(--font-size-lg);
+    font-weight: 500;
+    margin-bottom: var(--space-1);
+}
+
+.bookAuthor {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
