@@ -91,7 +91,7 @@ al-haqq/
 1.  **Clone the repository**
     ```bash
     git clone https://github.com/shaik-irfan-basha/Al-Haqq.git
-    cd AL-HAQQ
+    cd Al-Haqq
     ```
 
 2.  **Install JS Dependencies (Web & API)**
