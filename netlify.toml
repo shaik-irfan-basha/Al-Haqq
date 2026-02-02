@@ -1,0 +1,12 @@
+[build]
+  command = "pnpm --filter @al-haqq/web build"
+  publish = "apps/web/.next"
+  
+[context.production]
+  command = "pnpm --filter @al-haqq/web build"
+
+[context.deploy-preview]
+  command = "pnpm --filter @al-haqq/web build"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
