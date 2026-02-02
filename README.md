@@ -90,7 +90,7 @@ al-haqq/
 
 1.  **Clone the repository**
     ```bash
-    git clone https://github.com/shaik-irfan-basha/AL-HAQQ.git
+    git clone https://github.com/shaik-irfan-basha/Al-Haqq.git
     cd AL-HAQQ
     ```
 
