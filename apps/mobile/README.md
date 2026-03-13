@@ -1,70 +1,78 @@
 # Al-Haqq Mobile App
 
-Flutter-based cross-platform mobile application for iOS, Android, Windows, macOS, and Linux.
+> Cross-platform Flutter application for iOS, Android, Windows, macOS & Linux.
 
-## Status: 🚧 Scaffolded (Phase 6)
+---
 
-This directory will contain the Flutter app. According to the roadmap, Flutter development begins in **Phase 6 (Weeks 25-32)**.
+## 📋 Status
 
-## Setup Instructions (When Ready)
+| Phase   | Timeline          | Status        |
+| ------- | ----------------- | ------------- |
+| Phase 6 | Weeks 25–32       | 🚧 Scaffolded |
+
+Flutter development begins after the web platform is stable.
+
+---
+
+## 🚀 Setup (When Ready)
 
 ```bash
 # Create Flutter project
 flutter create --org com.alhaqq --project-name al_haqq .
 
-# Get dependencies
+# Install dependencies
 flutter pub get
 
-# Run on device
+# Run on connected device
 flutter run
 ```
 
-## Planned Structure
+---
+
+## 📁 Planned Architecture
 
 ```
-mobile/
-├── lib/
-│   ├── main.dart
-│   ├── app/
-│   │   ├── app.dart
-│   │   └── routes.dart
-│   ├── core/
-│   │   ├── api/
-│   │   ├── storage/
-│   │   └── theme/
-│   ├── features/
-│   │   ├── quran/
-│   │   ├── hadith/
-│   │   ├── basira/
-│   │   ├── prayer/
-│   │   └── settings/
-│   └── shared/
-│       ├── widgets/
-│       └── utils/
-├── assets/
-│   ├── fonts/
-│   └── images/
-├── android/
-├── ios/
-├── windows/
-├── macos/
-└── linux/
+lib/
+├── main.dart                 # App entry point
+├── app/
+│   ├── app.dart              # MaterialApp configuration
+│   └── routes.dart           # Named route definitions
+├── core/
+│   ├── api/                  # REST API client (Dio/http)
+│   ├── storage/              # Local storage (Hive/SQLite)
+│   └── theme/                # Design tokens, colors, typography
+├── features/
+│   ├── quran/                # Quran reader + audio
+│   ├── hadith/               # Hadith browser
+│   ├── basira/               # AI chat interface
+│   ├── prayer/               # Prayer times + Qibla
+│   └── settings/             # User preferences
+└── shared/
+    ├── widgets/              # Reusable UI components
+    └── utils/                # Helper functions
 ```
 
-## Features Planned
+---
 
-- 📖 Quran reader with audio
-- 📜 Hadith browser
-- 🤖 AI Basira chat
-- 🕌 Prayer times & Qibla
-- 📚 Memorization tools
-- ☁️ Cloud sync
-- 📱 Offline mode
+## ✨ Planned Features
 
-## Why Flutter?
+| Feature               | Description                                        |
+| --------------------- | -------------------------------------------------- |
+| 📖 Quran Reader       | Full Quran with audio, translations & tafsir       |
+| 📜 Hadith Browser     | Search & browse all 17 collections                 |
+| 🤖 Basira AI          | Islamic AI chat with source citations              |
+| 🕌 Prayer Times       | GPS-based salah timings with notifications          |
+| 🧭 Qibla Compass      | AR-style Qibla direction finder                    |
+| 📚 Memorization       | Hifz tracker with spaced repetition                |
+| ☁️ Cloud Sync         | Cross-device bookmarks, notes & progress           |
+| 📱 Offline Mode       | Full functionality without internet                |
 
-- Single codebase for all platforms
-- Native performance
-- Excellent Arabic/RTL support
-- 20+ year maintainability
-- Offline-first capability
+---
+
+## 🤔 Why Flutter?
+
+- **Single codebase** — 6 platforms from one Dart codebase
+- **Native performance** — Compiled to ARM/x64, no bridge
+- **Excellent RTL** — First-class Arabic & Urdu support
+- **Rich animations** — Custom painters, implicit & explicit
+- **Offline-first** — Built-in SQLite and local storage

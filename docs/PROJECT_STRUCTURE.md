@@ -1,46 +1,93 @@
 # Project Structure
 
-Al-Haqq is a monorepo containing the web application, database configuration, and documentation.
+> Architectural overview of the Al-Haqq monorepo.
+
+---
 
 ## Directory Layout
 
 ```
-.
-├── apps
-│   └── web                 # Next.js 14 Web Application
-│       ├── public          # Static assets
-│       └── src
-│           ├── app         # App Router pages (Quran, Hadith, Basira, etc.)
-│           ├── components  # React components (UI, Layout, Features)
-│           └── lib         # Utilities (Supabase client, API helpers)
+al-haqq/
 │
-├── packages
-│   └── database            # Database Configuration
-│       ├── src
-│       │   └── seeds       # Seeding scripts (Quran, Hadith data)
-│       └── schema.sql      # Database schema (Tables, RLS policies)
+├── apps/
+│   ├── web/                    # 🌐 Next.js 14 Web Application
+│   │   ├── public/             #    Static assets (icons, manifest)
+│   │   └── src/
+│   │       ├── app/            #    App Router pages
+│   │       │   ├── quran/      #      Surah list + Ayah reader
+│   │       │   ├── hadith/     #      Collection browser + Chapter view
+│   │       │   ├── basira/     #      AI chat interface
+│   │       │   └── tools/      #      Prayer, Zakat, Qibla, Inheritance
+│   │       ├── components/     #    Shared UI (Navbar, Footer)
+│   │       ├── data/           #    Local static data (surahs, collections)
+│   │       ├── features/       #    Feature-specific components
+│   │       └── lib/            #    Utilities (Supabase client, helpers)
+│   │
+│   ├── mobile/                 # 📱 Flutter App (Phase 6 — scaffolded)
+│   └── api/                    # ⚙️ Express.js REST API
 │
-├── data                    # Raw Data Sources
-│   ├── Quran               # SQL files for Quran text & translations
-│   └── Hadith              # JSON files for Hadith collections
+├── packages/
+│   ├── database/               # 🗄️ Database layer
+│   │   ├── schema.sql          #    PostgreSQL schema (tables, RLS, indexes)
+│   │   └── src/seeds/          #    Data seeding scripts
+│   ├── ai-basira/              # 🤖 AI prompt engineering & RAG logic
+│   └── shared/                 # 📦 Shared TypeScript types & utilities
 │
-├── docs                    # Documentation
-│   ├── CONTRIBUTING.md     # Guide for contributors
-│   └── PROJECT_STRUCTURE.md# This file
+├── data/                       # 📊 Raw data sources
+│   ├── Quran/                  #    SQL files (translations per language)
+│   └── Hadith/                 #    JSON files (17 hadith collections)
 │
-└── README.md               # Main entry point
+├── docs/                       # 📚 Documentation
+│   ├── CONTRIBUTING.md
+│   ├── GETTING_STARTED.md
+│   └── PROJECT_STRUCTURE.md    #    ← You are here
+│
+├── vercel.json                 # Vercel deployment config
+├── pnpm-workspace.yaml         # Workspace definition
+└── README.md                   # Project overview
 ```
+
+---
 
 ## Key Technologies
 
--   **Framework**: Next.js 14 (App Router)
--   **Language**: TypeScript
--   **Styling**: Tailwind CSS + CSS Modules
--   **Database**: Supabase (PostgreSQL)
--   **AI**: Google Gemini Pro (Basira AI)
--   **State**: React Hooks + Context
+| Component       | Technology                                    | Purpose                          |
+| --------------- | --------------------------------------------- | -------------------------------- |
+| **Framework**   | Next.js 14 (App Router)                       | SSG/SSR, routing, API routes     |
+| **Language**    | TypeScript                                    | Type safety across the stack     |
+| **Styling**     | Tailwind CSS + CSS Variables + Framer Motion  | Design system & animations       |
+| **Database**    | Supabase (PostgreSQL)                         | Data storage, auth, RLS          |
+| **AI**          | Google Gemini Pro                             | Basira AI assistant              |
+| **Search**      | pgvector (768-dim embeddings)                 | Semantic search across content   |
+| **State**       | React Hooks + Context + localStorage          | Client-side state management     |
 
-## Development
+---
 
-Run `pnpm dev` to start the frontend.
-Run `pnpm db:seed` to populate the database with Quran and Hadith data.
+## Data Flow
+
+```
+┌──────────────┐     ┌───────────────┐     ┌──────────────┐
+│  Next.js App │────▶│  Supabase DB  │◀────│  Seed Scripts│
+│  (Client)    │     │  (PostgreSQL) │     │  (data/)     │
+└──────┬───────┘     └───────────────┘     └──────────────┘
+       │
+       │ fallback
+       ▼
+┌──────────────┐
+│ AlQuran Cloud│
+│ Public API   │
+└──────────────┘
+```
+
+---
+
+## Development Commands
+
+```bash
+pnpm dev          # Start web app (localhost:3000)
+pnpm dev:api      # Start API server (localhost:4000)
+pnpm build        # Production build
+pnpm lint         # Lint all packages
+pnpm db:seed      # Seed Quran & Hadith data into Supabase
+pnpm clean        # Remove node_modules & build artifacts
+```

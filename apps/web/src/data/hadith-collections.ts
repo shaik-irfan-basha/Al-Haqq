@@ -76,7 +76,7 @@ export const hadithCollections: HadithCollection[] = [
         description: 'One of the earliest compilations, written by the founder of the Maliki school.'
     },
     {
-        id: 'ahmad',
+        id: 'ahmed',
         arabicName: 'مسند أحمد',
         englishName: 'Musnad Ahmad',
         author: 'Imam Ahmad ibn Hanbal',
@@ -94,7 +94,7 @@ export const hadithCollections: HadithCollection[] = [
         description: 'An early collection predating Bukhari and Muslim.'
     },
     {
-        id: 'riyadussalihin',
+        id: 'riyad_assalihin',
         arabicName: 'رياض الصالحين',
         englishName: 'Riyad as-Salihin',
         author: 'Imam an-Nawawi',
@@ -103,7 +103,7 @@ export const hadithCollections: HadithCollection[] = [
         description: 'A compilation of hadith focused on ethics and spiritual guidance.'
     },
     {
-        id: 'adab',
+        id: 'aladab_almufrad',
         arabicName: 'الأدب المفرد',
         englishName: 'Al-Adab al-Mufrad',
         author: 'Imam Muhammad al-Bukhari',
@@ -112,7 +112,7 @@ export const hadithCollections: HadithCollection[] = [
         description: 'A collection by Imam Bukhari focused on Islamic manners and etiquette.'
     },
     {
-        id: 'shamail',
+        id: 'shamail_muhammadiyah',
         arabicName: 'الشمائل المحمدية',
         englishName: 'Shama\'il Muhammadiyah',
         author: 'Imam at-Tirmidhi',
@@ -121,7 +121,7 @@ export const hadithCollections: HadithCollection[] = [
         description: 'Describes the physical and moral characteristics of Prophet Muhammad ﷺ.'
     },
     {
-        id: 'bulugh',
+        id: 'bulugh_almaram',
         arabicName: 'بلوغ المرام',
         englishName: 'Bulugh al-Maram',
         author: 'Ibn Hajar al-Asqalani',
@@ -130,7 +130,7 @@ export const hadithCollections: HadithCollection[] = [
         description: 'A collection of hadith pertaining to legal rulings.'
     },
     {
-        id: 'qudsi',
+        id: 'qudsi40',
         arabicName: 'الأحاديث القدسية',
         englishName: 'Hadith Qudsi',
         author: 'Various Compilers',
@@ -139,7 +139,7 @@ export const hadithCollections: HadithCollection[] = [
         description: 'Sacred hadith where Allah speaks through the Prophet ﷺ.'
     },
     {
-        id: 'arbaeen',
+        id: 'nawawi40',
         arabicName: 'الأربعين النووية',
         englishName: '40 Hadith Nawawi',
         author: 'Imam an-Nawawi',
@@ -148,7 +148,7 @@ export const hadithCollections: HadithCollection[] = [
         description: 'Forty-two foundational hadith on Islamic principles.'
     },
     {
-        id: 'mishkat',
+        id: 'mishkat_almasabih',
         arabicName: 'مشكاة المصابيح',
         englishName: 'Mishkat al-Masabih',
         author: 'Al-Khatib at-Tabrizi',

@@ -1,53 +1,76 @@
 # Contributing to Al-Haqq
 
-First off, thank you for considering contributing to Al-Haqq! It's people like you that make the Islamic digital ecosystem better.
+Jazak'Allahu Khairan for considering contributing to Al-Haqq! Together we can build the best Islamic knowledge platform.
 
-## Project Philosophy
+---
 
-Al-Haqq aims to be the definitive, open-source Islamic knowledge platform.
-- **Authenticity First**: We never compromise on data accuracy. All content must be sourced.
-- **Premium Design**: We believe Islamic software deserves the highest quality of UI/UX (Ihsan).
-- **Privacy Focused**: We minimize data collection and respect user privacy.
+## 🌟 Project Philosophy
 
-## Getting Started
+| Principle              | Description                                                                   |
+| ---------------------- | ----------------------------------------------------------------------------- |
+| **Authenticity First** | All content must be sourced from verified, scholarly references                |
+| **Premium Design**     | Islamic software deserves the highest quality of UI/UX (*Ihsan*)              |
+| **Privacy Focused**    | Minimal data collection; user privacy is sacred                               |
+| **Open Source**        | Knowledge should be accessible to all                                         |
 
-1.  **Fork the repository**
-2.  **Clone it locally**:
-    ```bash
-    git clone https://github.com/your-username/al-haqq.git
-    cd al-haqq
-    ```
-3.  **Install dependencies**:
-    ```bash
-    pnpm install
-    ```
-    (We use `pnpm` for efficient package management)
-4.  **Set up environment**:
-    Copy `.env.example` to `.env` and fill in necessary keys (Supabase, Gemini).
-5.  **Run development server**:
-    ```bash
-    pnpm dev
-    ```
+---
 
-## Project Structure
+## 🚀 Getting Started
 
-- `apps/web`: The Next.js frontend application.
-- `packages/database`: Database schema, seeds, and types.
-- `data`: Raw SQL/JSON data sources.
+```bash
+# 1. Fork & clone
+git clone https://github.com/your-username/Al-Haqq.git
+cd Al-Haqq
 
-## data Guidelines
+# 2. Install dependencies (pnpm required)
+pnpm install
 
-- **Quran**: We use Uthmani script (Hafs).
-- **Translations**: Must be from reputable centers (e.g., King Fahd Complex).
-- **Hadith**: Must include grading (Sahih, Hasan, etc.).
+# 3. Set up environment
+cp apps/web/.env.local.example apps/web/.env.local
+# Edit .env.local with your Supabase and Gemini keys
 
-## Submitting Changes
+# 4. Start dev server
+pnpm dev
+```
 
-1.  Create a new branch: `git checkout -b feature/amazing-feature`
-2.  Commit your changes: `git commit -m 'feat: Add amazing feature'`
-3.  Push to the branch: `git push origin feature/amazing-feature`
-4.  Open a Pull Request.
+---
 
-## Code of Conduct
+## 📁 Key Directories
 
-Be respectful, humble, and helpful. We are building for the sake of Allah and the Ummah.
+| Directory              | Purpose                                    |
+| ---------------------- | ------------------------------------------ |
+| `apps/web/`            | Next.js 14 frontend application            |
+| `apps/api/`            | Express.js backend API                     |
+| `packages/database/`   | Database schema, seeds & types             |
+| `data/`                | Raw SQL/JSON data sources                  |
+| `docs/`                | Documentation                              |
+
+---
+
+## 📜 Data Guidelines
+
+- **Qur'an** — Uthmani script (Hafs reading) only
+- **Translations** — Must be from reputable centers (e.g., King Fahd Complex, Sahih International)
+- **Hadith** — Must include grading (Sahih, Hasan, Da'if, etc.) with chain references where available
+
+---
+
+## 🔀 Submitting Changes
+
+1. **Branch** — `git checkout -b feature/amazing-feature`
+2. **Commit** — Use [Conventional Commits](https://www.conventionalcommits.org/): `feat:`, `fix:`, `docs:`, `refactor:`
+3. **Push** — `git push origin feature/amazing-feature`
+4. **PR** — Open a Pull Request with a clear description of changes
+
+### PR Checklist
+
+- [ ] Code builds without errors (`pnpm build`)
+- [ ] No lint warnings (`pnpm lint`)
+- [ ] New data is properly sourced and attributed
+- [ ] UI changes are responsive and work in dark mode
+
+---
+
+## 🤲 Code of Conduct
+
+Be respectful, humble, and helpful. We are building for the sake of Allah and the benefit of the Ummah. Differences of opinion in fiqh should be noted, not debated.

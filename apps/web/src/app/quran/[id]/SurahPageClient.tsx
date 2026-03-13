@@ -122,71 +122,117 @@ export default function SurahPageClient({ params }: { params: { id: string } }) 
         }
     }, []);
 
-    // Fetch surah data and ayahs
+    // Fetch surah data and ayahs from Supabase, with public API fallback
     React.useEffect(() => {
-        async function fetchData() {
-            if (!isSupabaseConfigured()) {
-                setIsLoading(false);
-                return;
-            }
-
+        async function fetchFromPublicAPI() {
             try {
-                // Fetch surah info
-                const { data: surahData } = await supabase
-                    .from('surahs')
-                    .select('*')
-                    .eq('number', surahNumber)
-                    .single();
+                // Fetch Arabic text and English translation in parallel
+                const [arabicRes, englishRes] = await Promise.all([
+                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`),
+                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`)
+                ]);
 
-                if (surahData) {
-                    setSurah({
-                        number: surahData.number,
-                        arabicName: surahData.arabic_name,
-                        englishName: surahData.english_name,
-                        transliteration: surahData.transliteration,
-                        revelationType: surahData.revelation_type,
-                        totalAyahs: surahData.total_ayahs,
-                    });
+                const arabicData = await arabicRes.json();
+                const englishData = await englishRes.json();
 
-                    // Fetch ayahs with ALL translations
-                    const { data: ayahsData } = await supabase
-                        .from('ayahs')
-                        .select(`
-                            id,
-                            ayah_number,
-                            arabic_text,
-                            translations:quran_translations (
-                                translator,
-                                language_code,
-                                translation_text
-                            )
-                        `)
-                        .eq('surah_id', surahData.id)
-                        .order('ayah_number');
+                if (arabicData.code === 200 && englishData.code === 200) {
+                    const arabicAyahs = arabicData.data.ayahs;
+                    const englishAyahs = englishData.data.ayahs;
 
-                    if (ayahsData && ayahsData.length > 0) {
-                        // Extract unique translators with language info
-                        const translators = new Map<string, TranslatorOption>();
-                        ayahsData.forEach((ayah: any) => {
-                            ayah.translations?.forEach((t: any) => {
-                                if (t.translator && !translators.has(t.translator)) {
-                                    const langInfo = LANGUAGES[t.language_code] || { name: t.language_code, flag: '🌐', native: t.language_code };
-                                    translators.set(t.translator, {
-                                        translator: t.translator,
-                                        language_code: t.language_code,
-                                        language_name: langInfo.name
-                                    });
-                                }
-                            });
-                        });
+                    const ayahsFormatted: AyahData[] = arabicAyahs.map((a: any, idx: number) => ({
+                        id: a.number,
+                        ayah_number: a.numberInSurah,
+                        arabic_text: a.text,
+                        translations: [
+                            {
+                                translator: 'Sahih International',
+                                language_code: 'en',
+                                translation_text: englishAyahs[idx]?.text || ''
+                            }
+                        ]
+                    }));
 
-                        setAvailableTranslators(Array.from(translators.values()));
-                        setAyahs(ayahsData);
-                        setUsingDatabase(true);
-                    }
+                    setAvailableTranslators([{
+                        translator: 'Sahih International',
+                        language_code: 'en',
+                        language_name: 'English'
+                    }]);
+                    setAyahs(ayahsFormatted);
                 }
             } catch (err) {
+                console.error('Error fetching from public API:', err);
+            }
+        }
+
+        async function fetchData() {
+            try {
+                // Try Supabase first
+                if (isSupabaseConfigured()) {
+                    const { data: surahData } = await supabase
+                        .from('surahs')
+                        .select('*')
+                        .eq('number', surahNumber)
+                        .single();
+
+                    if (surahData) {
+                        setSurah({
+                            number: surahData.number,
+                            arabicName: surahData.arabic_name,
+                            englishName: surahData.english_name,
+                            transliteration: surahData.transliteration,
+                            revelationType: surahData.revelation_type,
+                            totalAyahs: surahData.total_ayahs,
+                        });
+
+                        const { data: ayahsData } = await supabase
+                            .from('ayahs')
+                            .select(`
+                                id,
+                                ayah_number,
+                                arabic_text,
+                                translations:quran_translations (
+                                    translator,
+                                    language_code,
+                                    translation_text
+                                )
+                            `)
+                            .eq('surah_id', surahData.id)
+                            .order('ayah_number');
+
+                        // Check if data has actual content (not just empty rows)
+                        const hasContent = ayahsData && ayahsData.length > 0 && 
+                            ayahsData[0].arabic_text && ayahsData[0].arabic_text.trim().length > 0;
+
+                        if (hasContent) {
+                            const translators = new Map<string, TranslatorOption>();
+                            ayahsData.forEach((ayah: any) => {
+                                ayah.translations?.forEach((t: any) => {
+                                    if (t.translator && !translators.has(t.translator)) {
+                                        const langInfo = LANGUAGES[t.language_code] || { name: t.language_code, flag: '🌐', native: t.language_code };
+                                        translators.set(t.translator, {
+                                            translator: t.translator,
+                                            language_code: t.language_code,
+                                            language_name: langInfo.name
+                                        });
+                                    }
+                                });
+                            });
+
+                            setAvailableTranslators(Array.from(translators.values()));
+                            setAyahs(ayahsData);
+                            setUsingDatabase(true);
+                            setIsLoading(false);
+                            return; // Supabase had valid data, done
+                        }
+                    }
+                }
+
+                // Fallback: fetch from public Quran API
+                await fetchFromPublicAPI();
+            } catch (err) {
                 console.error('Error fetching surah:', err);
+                // Last resort fallback
+                await fetchFromPublicAPI();
             } finally {
                 setIsLoading(false);
             }

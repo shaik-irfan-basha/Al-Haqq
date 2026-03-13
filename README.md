@@ -1,209 +1,190 @@
-# 🕌 Al-Haqq | The Ultimate Islamic Knowledge Platform
+<div align="center">
 
-> **Clear. Authentic. Timeless.**  
-> Discover the divine wisdom of Islam through verified sources, beautiful presentation, and sacred simplicity.
+# 🕌 Al-Haqq
 
-[![Status](https://img.shields.io/badge/Status-Production%20Ready-success?style=for-the-badge&logo=vercel)](https://al-haqq.vercel.app)
-[![Tech Stack](https://img.shields.io/badge/Stack-Next.js%2014%20|%20Flutter%20|%20Express-blue?style=for-the-badge&logo=next.js)](https://nextjs.org)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+### **The Ultimate Islamic Knowledge Platform**
 
-## 🌟 Overview
+> *"And say: My Lord, increase me in knowledge."* — Qur'an 20:114
 
-**Al-Haqq** is a comprehensive Islamic Digital Ecosystem designed to provide accessible, authentic, and aesthetically pleasing access to sacred texts and tools. It operates as a monorepo containing:
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-al--haqq.vercel.app-0E3B2E?style=for-the-badge)](https://al-haqq.vercel.app)
+[![Next.js](https://img.shields.io/badge/Next.js_14-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org)
+[![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
+[![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
+[![License: MIT](https://img.shields.io/badge/License-MIT-C7A24D?style=for-the-badge)](LICENSE)
 
-*   **🌐 Web Platform**: A Next.js 14 Progressive Web App (PWA) for desktop and mobile web.
-*   **📱 Mobile App**: A high-performance Flutter application for iOS and Android.
-*   **⚙️ Backend API**: A robust Node.js/Express REST API powering the ecosystem.
+**Clear. Authentic. Timeless.**
 
-Built with a **Feature-Based Architecture (FBA)** and "Best of All Time" engineering standards, it ensures seamless scalability and maintenance.
+Discover the divine wisdom of Islam through verified sources, beautiful presentation, and sacred simplicity.
 
-## 🚀 Key Features
-
-### 📖 Sacred Texts
-*   **The Noble Qur'an**: Complete 114 Surahs with 10+ translations, transliterations, and gapless audio.
-*   **Hadith Collections**: 60,000+ narrations from Bukhari, Muslim, and other authentic books.
-*   **Search**: Ultra-fast search across Quran and Hadith.
-
-### 🤖 Smart Intelligence
-*   **Basira AI**: Advanced Islamic AI assistant providing strictly referenced answers from Quran and Sunnah.
-
-### 🕋 Tools & Utilities
-*   **Prayer Times**: Accurate timings with geolocation and manual adjustment.
-*   **Zakat Calculator**: Precise calculations for Gold, Silver, Cash, and Assets.
-*   **Qibla Finder**: AR-style Qibla direction.
-*   **Inheritance Calculator**: Sharia-compliant inheritance distribution.
-
-### 🎨 Next-Gen UI/UX
-*   **Futuristic Design**: Glassmorphism, smooth gradients, and noise textures.
-*   **Motion**: Fluid transitions powered by Framer Motion (Web) and Flutter Animations (Mobile).
-*   **Responsive**: Optimized for every screen size.
+</div>
 
 ---
 
-## 🏗️ Project Structure
+## ✨ Features
 
-This is a **Monorepo** managed by `pnpm` workspaces.
+<table>
+<tr>
+<td width="50%">
+
+### 📖 Sacred Texts
+- **The Noble Qur'an** — Complete 114 Surahs with multi-language translations, transliteration, and gapless audio recitation
+- **Hadith Collections** — 60,000+ authentic narrations from 17 books including Kutub al-Sittah
+- **Full-Text Search** — Instant search across all Quranic verses and Hadith
+
+</td>
+<td width="50%">
+
+### 🤖 Basira AI
+- **Islamic AI Assistant** — Get answers grounded strictly in Qur'an and Sunnah
+- **Source Citations** — Every response includes verifiable references
+- **Powered by Gemini Pro** — State-of-the-art language understanding
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🕋 Tools & Utilities
+- **Prayer Times** — Accurate salah timings with geolocation
+- **Zakat Calculator** — Gold, Silver, Cash & Asset calculations
+- **Qibla Finder** — AR-style direction finder
+- **Inheritance Calculator** — Sharia-compliant distribution
+
+</td>
+<td width="50%">
+
+### 🎨 Premium Design
+- **Glassmorphism & Gradients** — Modern, elegant UI
+- **Framer Motion Animations** — Fluid, polished transitions
+- **Dark Mode** — Automatic system-preference detection
+- **Fully Responsive** — Optimized for every screen size
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🏗️ Architecture
+
+This is a **pnpm monorepo** with the following structure:
 
 ```
 al-haqq/
 ├── apps/
-│   ├── web/             # Next.js 14 Web Application
-│   ├── mobile/          # Flutter Mobile Application
-│   └── api/             # Express.js Backend API
+│   ├── web/              → Next.js 14 PWA  (App Router, SSG)
+│   ├── mobile/           → Flutter App     (iOS, Android, Desktop)
+│   └── api/              → Express.js API  (REST, AI endpoints)
 ├── packages/
-│   ├── database/        # Shared Database schema & Prisma/Supabase clients
-│   ├── ai-basira/       # Shared AI logic and prompts
-│   └── shared/          # Shared TypeScript types and utilities
-└── docs/                # Documentation
+│   ├── database/         → Supabase schema, seeds & migrations
+│   ├── ai-basira/        → AI prompts & retrieval logic
+│   └── shared/           → Shared types & utilities
+├── data/                 → Raw Quran SQL & Hadith JSON sources
+└── docs/                 → Contributing, setup & architecture docs
 ```
 
 ---
 
 ## 🛠️ Tech Stack
 
-### 🌐 Web (`apps/web`)
-*   **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
-*   **Styling**: Tailwind CSS + Framer Motion
-*   **State**: React Hooks + Context
-
-### 📱 Mobile (`apps/mobile`)
-*   **Framework**: [Flutter](https://flutter.dev/)
-*   **Language**: Dart 3
-*   **State**: Riverpod / Bloc
-
-### ⚙️ Backend (`apps/api`)
-*   **Runtime**: Node.js
-*   **Framework**: Express.js
-*   **Database**: Supabase (PostgreSQL)
-*   **AI**: Google Generative AI (Gemini Pro)
+| Layer        | Technology                                         |
+| ------------ | -------------------------------------------------- |
+| **Frontend** | Next.js 14, React 18, Tailwind CSS, Framer Motion  |
+| **Mobile**   | Flutter 3, Dart, Riverpod                           |
+| **Backend**  | Node.js, Express.js                                 |
+| **Database** | Supabase (PostgreSQL), pgvector for semantic search |
+| **AI**       | Google Gemini Pro, RAG pipeline                     |
+| **Hosting**  | Vercel (Web), Railway (API)                         |
 
 ---
 
-## ⚡ Getting Started
+## ⚡ Quick Start
 
 ### Prerequisites
-*   **Node.js**: v20+
-*   **pnpm**: v9+ (Recommended)
-*   **Flutter SDK**: v3.0+ (For mobile development)
 
-### Installation
+- **Node.js** ≥ 20 &nbsp;·&nbsp; **pnpm** ≥ 9 &nbsp;·&nbsp; **Git**
 
-1.  **Clone the repository**
-    ```bash
-    git clone https://github.com/shaik-irfan-basha/Al-Haqq.git
-    cd Al-Haqq
-    ```
+### 1. Clone & Install
 
-2.  **Install JS Dependencies (Web & API)**
-    ```bash
-    pnpm install
-    ```
-
-3.  **Install Mobile Dependencies**
-    ```bash
-    cd apps/mobile
-    flutter pub get
-    cd ../..
-    ```
-
-4.  **Environment Setup**
-    Create `.env` files in `apps/web` and `apps/api` based on their `.env.example` files.
-
-### 🏃‍♂️ Running the Apps
-
-#### Web Development
-Runs the Next.js web app at [http://localhost:3000](http://localhost:3000).
 ```bash
-pnpm dev
-# OR specific command:
-pnpm --filter @al-haqq/web dev
+git clone https://github.com/shaik-irfan-basha/Al-Haqq.git
+cd Al-Haqq
+pnpm install
 ```
 
-#### Backend API
-Runs the Express API at [http://localhost:4000](http://localhost:4000).
+### 2. Environment Setup
+
 ```bash
-pnpm dev:api
+cp apps/web/.env.local.example apps/web/.env.local
 ```
 
-#### Mobile App
-Launches the Flutter app on your connected device or emulator.
+Add your [Supabase](https://supabase.com) and [Gemini](https://ai.google.dev) keys to `.env.local`.
+
+> **Note:** The app works without Supabase credentials — it falls back to the public [AlQuran Cloud API](https://alquran.cloud/api) for Quranic text.
+
+### 3. Run
+
 ```bash
-cd apps/mobile
-flutter run
+pnpm dev              # Web app → http://localhost:3000
+pnpm dev:api          # API     → http://localhost:4000
 ```
 
 ---
 
 ## 🚀 Deployment
 
-### 🌐 Web Deployment (Next.js)
+### Web (Vercel — Recommended)
 
-**Recommended: Git Integration (Vercel/Netlify)**
-1.  Push your code to GitHub.
-2.  Import the project into Vercel or Netlify.
-3.  Set the Root Directory to `apps/web`.
-4.  The build command `next build` and output directory `out` (or `.next`) will be auto-detected.
+1. Push to GitHub
+2. Import into [Vercel](https://vercel.com)
+3. Set **Root Directory** → `apps/web`
+4. Add environment variables in Vercel dashboard
+5. Deploy ✅
 
-**Manual Upload (Netlify Drop)**
-> [!IMPORTANT]
-> If using Netlify Drop, you must build the project locally first and upload the **output** folder, not the source code.
+### API (Railway / Render)
 
-1.  Run the build command:
-    ```bash
-    pnpm build
-    ```
-2.  Navigate to `apps/web/out`.
-3.  Drag the **`out`** folder into Netlify Drop.
-    *   *Do not drag the root `AL-HAQQ` folder or `apps/web` folder.*
+- **Build**: `pnpm build` (inside `apps/api`)
+- **Start**: `node dist/index.js`
 
-### ⚙️ API Deployment
-Deploy the `apps/api` directory to a Node.js hosting provider like **Railway**, **Render**, or **Heroku**.
-*   **Build Command**: `pnpm build` (inside `apps/api`)
-*   **Start Command**: `node dist/index.js`
+### Mobile
 
-### 📱 Mobile Deployment
-Follow the official Flutter guides to build for stores:
-*   [Build for Android](https://docs.flutter.dev/deployment/android)
-*   [Build for iOS](https://docs.flutter.dev/deployment/ios)
+- [Android Deployment Guide](https://docs.flutter.dev/deployment/android)
+- [iOS Deployment Guide](https://docs.flutter.dev/deployment/ios)
 
 ---
 
 ## 🤝 Contributing
 
-1.  Fork the Project
-2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3.  Commit your Changes
-4.  Push to the Branch
-5.  Open a Pull Request
+We welcome contributions! See [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) for guidelines.
+
+1. Fork the repository
+2. Create your feature branch — `git checkout -b feature/amazing-feature`
+3. Commit your changes — `git commit -m 'feat: add amazing feature'`
+4. Push & open a Pull Request
 
 ---
 
 ## 📄 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for details.
 
 ---
 
-## 👨‍💻 Author
-
 <div align="center">
-  <img src="apps/web/public/author.jpg" alt="Shaik Irfan Basha" width="120" style="border-radius: 50%; border: 4px solid #C7A24D;" />
-  <h3>Shaik Irfan Basha</h3>
-  <p><i>AI Developer & Software Engineer</i></p>
-  
-  <a href="https://www.linkedin.com/in/shaik-irfan-basha">
-    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" />
-  </a>
-  <a href="https://github.com/shaik-irfan-basha">
-    <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
-  </a>
-  <a href="mailto:muhammadirfanbasha@gmail.com">
-    <img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
-  </a>
-</div>
 
-<div align="center">
-  <br />
-  <p><i>"And say: My Lord, increase me in knowledge." — Quran 20:114</i></p>
-  <p>Made with ❤️ for the Ummah | © 2026 Al-Haqq</p>
+### 👨‍💻 Author
+
+<img src="apps/web/public/author.jpg" alt="Shaik Irfan Basha" width="120" style="border-radius: 50%; border: 4px solid #C7A24D;" />
+
+**Shaik Irfan Basha**
+*AI Developer & Software Engineer*
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/shaik-irfan-basha)
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=flat-square&logo=github&logoColor=white)](https://github.com/shaik-irfan-basha)
+[![Email](https://img.shields.io/badge/Email-D14836?style=flat-square&logo=gmail&logoColor=white)](mailto:muhammadirfanbasha@gmail.com)
+
+---
+
+Made with ❤️ for the Ummah &nbsp;·&nbsp; © 2026 Al-Haqq
+
 </div>
