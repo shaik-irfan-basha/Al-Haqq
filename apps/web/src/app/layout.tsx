@@ -52,8 +52,8 @@ export const metadata: Metadata = {
     },
     manifest: '/manifest.json',
     icons: {
-        icon: '/favicon.ico',
-        apple: '/apple-touch-icon.png',
+        icon: '/favicon.png',
+        apple: '/logo.png',
     },
     verification: {
         google: 'N_0YgkrZaG-GsiVOXh9qH1raQb7GiT2dQWYxhd4t444',
@@ -63,10 +63,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
     width: 'device-width',
     initialScale: 1,
-    themeColor: [
-        { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-        { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' },
-    ],
+    themeColor: '#0C1210',
 };
 
 import { AudioProvider } from '@/context/AudioContext';
@@ -76,6 +73,8 @@ import Footer from '@/components/layout/Footer';
 import MobileNav from '@/components/MobileNav';
 import { ToastProvider } from '@/components/ToastProvider';
 
+import ParticlesBackground from '@/components/ui/ParticlesBackground';
+
 export default function RootLayout({
     children,
 }: {
@@ -83,11 +82,12 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" className={`${inter.variable} ${playfair.variable} ${amiri.variable}`}>
-            <body>
+            <body className="relative">
+                <ParticlesBackground />
                 <ToastProvider>
                     <AudioProvider>
                         <Navbar />
-                        <main className="pb-16 md:pb-0">
+                        <main className="pb-16 md:pb-0 relative z-10">
                             {children}
                         </main>
                         <Footer />

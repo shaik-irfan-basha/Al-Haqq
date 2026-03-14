@@ -49,10 +49,6 @@ export default function ParticlesBackground() {
         const animate = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Is Dark Mode?
-            const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            ctx.fillStyle = isDark ? 'rgba(255, 255, 255, ' : 'rgba(14, 59, 46, '; // Primary color or white
-
             particles.forEach((p) => {
                 p.x += p.speedX;
                 p.y += p.speedY;
@@ -65,9 +61,8 @@ export default function ParticlesBackground() {
 
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fillStyle = isDark
-                    ? `rgba(255, 255, 255, ${p.opacity})`
-                    : `rgba(14, 59, 46, ${p.opacity})`;
+                // Use white/gold particles for the forced dark mode
+                ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity * 0.4})`;
                 ctx.fill();
             });
 
@@ -87,7 +82,7 @@ export default function ParticlesBackground() {
     return (
         <canvas
             ref={canvasRef}
-            className="absolute inset-0 z-0 pointer-events-none opacity-50"
+            className="fixed inset-0 z-[-1] pointer-events-none opacity-40"
         />
     );
 }

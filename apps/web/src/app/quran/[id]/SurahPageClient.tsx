@@ -79,6 +79,116 @@ const saveNote = (id: string, content: string, title: string) => {
     localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
 };
 
+// Memoized Ayah Card to prevent unnecessary re-renders
+const AyahCard = React.memo(({ 
+    ayah, 
+    surahNumber, 
+    selectedLanguages, 
+    isBookmarked, 
+    isPlaying, 
+    isHighlighted, 
+    isCopied, 
+    onBookmark, 
+    onPlay, 
+    onNote, 
+    onCopy, 
+    onShare,
+    setRef,
+    index
+}: {
+    ayah: any;
+    surahNumber: number;
+    selectedLanguages: string[];
+    isBookmarked: boolean;
+    isPlaying: boolean;
+    isHighlighted: boolean;
+    isCopied: boolean;
+    onBookmark: (num: number) => void;
+    onPlay: (num: number) => void;
+    onNote: (num: number, arabic: string) => void;
+    onCopy: (ayah: any) => void;
+    onShare: (ayah: any) => void;
+    setRef: (el: HTMLDivElement | null) => void;
+    index: number;
+}) => {
+    return (
+        <motion.div
+            id={`ayah-${ayah.ayah_number}`}
+            ref={setRef}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: Math.min(index * 0.01, 0.3) }}
+            className={`card-premium p-5 sm:p-6 group transition-all duration-300 ${isHighlighted ? 'ring-2 ring-[var(--color-primary)] shadow-lg bg-[var(--color-primary)]/5' : ''}`}
+        >
+            {/* Ayah Number & Actions */}
+            <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                    <span className="w-10 h-10 rounded-xl bg-[var(--color-primary)]/10 flex items-center justify-center text-[var(--color-primary)] font-medium text-sm">
+                        {ayah.ayah_number}
+                    </span>
+                </div>
+                <div className="flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                        onClick={() => onBookmark(ayah.ayah_number)}
+                        className={`action-btn ${isBookmarked ? '!text-[var(--color-accent)] !bg-[var(--color-accent)]/10' : ''}`}
+                    >
+                        <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
+                    </button>
+                    <button
+                        onClick={() => onPlay(ayah.ayah_number)}
+                        className={`action-btn ${isPlaying ? '!text-[var(--color-primary)] !bg-[var(--color-primary)]/10' : ''}`}
+                    >
+                        {isPlaying ? <span className="animate-pulse">❚❚</span> : <Play className="w-4 h-4" />}
+                    </button>
+                    <button onClick={() => onNote(ayah.ayah_number, ayah.arabic_text)} className="action-btn">
+                        <FileText className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => onCopy(ayah)} className="action-btn">
+                        {isCopied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                    </button>
+                    <button onClick={() => onShare(ayah)} className="action-btn">
+                        <Share2 className="w-4 h-4" />
+                    </button>
+                </div>
+            </div>
+
+            {/* Arabic Text */}
+            <p className="font-arabic text-2xl sm:text-3xl md:text-4xl text-[var(--color-text)] text-right leading-loose mb-6" dir="rtl">
+                {ayah.arabic_text}
+                <span className="inline-block w-8 h-8 mx-2 text-base align-middle text-[var(--color-primary)] rounded-full bg-[var(--color-primary)]/10">
+                    {`\u06DD${ayah.ayah_number.toLocaleString('ar-SA')}`}
+                </span>
+            </p>
+
+            {/* Translations */}
+            <div className="space-y-4 border-t border-[var(--color-border)] pt-4">
+                {selectedLanguages.map(langCode => {
+                    const translation = ayah.translations?.find((t: any) => t.language_code === langCode);
+                    if (!translation) return null;
+                    const langInfo = LANGUAGES[langCode];
+
+                    return (
+                        <div key={langCode}>
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className="text-xs">{langInfo?.flag || '🌐'}</span>
+                                <span className="text-xs text-[var(--color-text-muted)]">
+                                    {langInfo?.name || langCode}
+                                </span>
+                            </div>
+                            <p
+                                className={`text-base text-[var(--color-text-secondary)] leading-relaxed ${['ar', 'ur'].includes(langCode) ? 'text-right font-arabic text-xl' : ''}`}
+                                dir={['ar', 'ur'].includes(langCode) ? 'rtl' : 'ltr'}
+                            >
+                                {translation.translation_text}
+                            </p>
+                        </div>
+                    );
+                })}
+            </div>
+        </motion.div>
+    );
+});
+
 export default function SurahPageClient({ params }: { params: { id: string } }) {
     const surahNumber = parseInt(params.id);
     const localSurah = localSurahs.find(s => s.number === surahNumber);
@@ -124,39 +234,78 @@ export default function SurahPageClient({ params }: { params: { id: string } }) 
 
     // Fetch surah data and ayahs from Supabase, with public API fallback
     React.useEffect(() => {
-        async function fetchFromPublicAPI() {
+        async function fetchFromPublicAPI(langs: string[] = ['en']) {
             try {
-                // Fetch Arabic text and English translation in parallel
-                const [arabicRes, englishRes] = await Promise.all([
-                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`),
-                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`)
-                ]);
+                // Determine which editions to fetch based on language codes
+                // Mapping our codes to alquran.cloud editions
+                const editionMap: Record<string, string> = {
+                    en: 'en.sahih',
+                    bn: 'bn.bengali',
+                    hi: 'hi.hindi',
+                    ur: 'ur.jalandhry',
+                    ml: 'ml.abdulhameed',
+                    ta: 'ta.tamil',
+                    te: 'te.telugu',
+                };
 
-                const arabicData = await arabicRes.json();
-                const englishData = await englishRes.json();
+                const editionsToFetch = langs
+                    .map(l => editionMap[l])
+                    .filter(Boolean);
 
-                if (arabicData.code === 200 && englishData.code === 200) {
+                // Always fetch Arabic
+                const fetchPromises = [
+                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`).then(r => r.json())
+                ];
+
+                // Fetch each translation
+                editionsToFetch.forEach(edition => {
+                    fetchPromises.push(fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/${edition}`).then(r => r.json()));
+                });
+
+                const results = await Promise.all(fetchPromises);
+                const arabicData = results[0];
+                const translationsData = results.slice(1);
+
+                if (arabicData.code === 200) {
                     const arabicAyahs = arabicData.data.ayahs;
-                    const englishAyahs = englishData.data.ayahs;
+                    const translators: TranslatorOption[] = [];
 
-                    const ayahsFormatted: AyahData[] = arabicAyahs.map((a: any, idx: number) => ({
-                        id: a.number,
-                        ayah_number: a.numberInSurah,
-                        arabic_text: a.text,
-                        translations: [
-                            {
-                                translator: 'Sahih International',
-                                language_code: 'en',
-                                translation_text: englishAyahs[idx]?.text || ''
+                    const ayahsFormatted: AyahData[] = arabicAyahs.map((a: any, idx: number) => {
+                        const ayTranslations: any[] = [];
+                        
+                        translationsData.forEach((tData, tIdx) => {
+                            if (tData.code === 200) {
+                                const tAyah = tData.data.ayahs[idx];
+                                const langCode = editionsToFetch[tIdx].split('.')[0];
+                                const translatorName = tData.data.edition.englishName;
+                                
+                                ayTranslations.push({
+                                    translator: translatorName,
+                                    language_code: langCode,
+                                    translation_text: tAyah.text
+                                });
+
+                                // Add to unique translators if not already added
+                                if (idx === 0) {
+                                    const langInfo = LANGUAGES[langCode] || { name: langCode, flag: '🌐', native: langCode };
+                                    translators.push({
+                                        translator: translatorName,
+                                        language_code: langCode,
+                                        language_name: langInfo.name
+                                    });
+                                }
                             }
-                        ]
-                    }));
+                        });
 
-                    setAvailableTranslators([{
-                        translator: 'Sahih International',
-                        language_code: 'en',
-                        language_name: 'English'
-                    }]);
+                        return {
+                            id: a.number,
+                            ayah_number: a.numberInSurah,
+                            arabic_text: a.text,
+                            translations: ayTranslations
+                        };
+                    });
+
+                    setAvailableTranslators(translators);
                     setAyahs(ayahsFormatted);
                 }
             } catch (err) {
@@ -218,28 +367,40 @@ export default function SurahPageClient({ params }: { params: { id: string } }) 
                                 });
                             });
 
-                            setAvailableTranslators(Array.from(translators.values()));
-                            setAyahs(ayahsData);
-                            setUsingDatabase(true);
-                            setIsLoading(false);
-                            return; // Supabase had valid data, done
+                            // If some languages are missing from DB, we might want to supplement?
+                            // For now, if we have content, we use it. 
+                            // But let's check if the selected languages are present.
+                            const dbLangs = Array.from(translators.values()).map(t => t.language_code);
+                            const missingLangs = selectedLanguages.filter(l => !dbLangs.includes(l) && l !== 'ar');
+
+                            if (missingLangs.length === 0) {
+                                setAvailableTranslators(Array.from(translators.values()));
+                                setAyahs(ayahsData);
+                                setUsingDatabase(true);
+                                setIsLoading(false);
+                                return;
+                            } else {
+                                // Supplement missing translations from API? 
+                                // This is complex, for simple fallback we just move to API if majorly missing
+                                // or if the user explicitly wants better data.
+                                // Let's try to fetch from API as fallback if DB is surprisingly empty for those langs.
+                            }
                         }
                     }
                 }
 
-                // Fallback: fetch from public Quran API
-                await fetchFromPublicAPI();
+                // Fallback: fetch from public Quran API with all requested languages
+                await fetchFromPublicAPI(selectedLanguages);
             } catch (err) {
                 console.error('Error fetching surah:', err);
-                // Last resort fallback
-                await fetchFromPublicAPI();
+                await fetchFromPublicAPI(selectedLanguages);
             } finally {
                 setIsLoading(false);
             }
         }
 
         fetchData();
-    }, [surahNumber]);
+    }, [surahNumber, selectedLanguages]);
 
     // Toggle language selection
     const toggleLanguage = (langCode: string) => {
@@ -524,113 +685,30 @@ export default function SurahPageClient({ params }: { params: { id: string } }) 
                 <section className="px-4 sm:px-6">
                     <div className="max-w-4xl mx-auto">
                         <div className="space-y-6">
-                            {ayahs.map((ayah, index) => {
-                                const bookmarkId = `ayah:${surahNumber}:${ayah.ayah_number}`;
-                                const isBookmarked = bookmarkedAyahs.has(bookmarkId);
-                                const isCopied = copiedAyah === ayah.ayah_number;
-
-                                return (
-                                    <motion.div
-                                        key={ayah.id}
-                                        id={`ayah-${ayah.ayah_number}`}
-                                        ref={(el) => {
-                                            if (el) ayahElementsRef.current.set(ayah.ayah_number, el);
-                                        }}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.3, delay: Math.min(index * 0.02, 0.5) }}
-                                        className={`card-premium p-5 sm:p-6 group transition-all duration-300 ${highlightedAyah === ayah.ayah_number ? 'ring-2 ring-[var(--color-primary)] shadow-lg bg-[var(--color-primary)]/5' : ''}`}
-                                    >
-                                        {/* Ayah Number & Actions */}
-                                        <div className="flex items-center justify-between mb-4">
-                                            <div className="flex items-center gap-3">
-                                                <span className="w-10 h-10 rounded-xl bg-[var(--color-primary)]/10 flex items-center justify-center text-[var(--color-primary)] font-medium text-sm">
-                                                    {ayah.ayah_number}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <button
-                                                    onClick={() => handleBookmark(ayah.ayah_number)}
-                                                    className={`action-btn ${isBookmarked ? '!text-[var(--color-accent)] !bg-[var(--color-accent)]/10' : ''}`}
-                                                    title={isBookmarked ? 'Remove Bookmark' : 'Bookmark'}
-                                                >
-                                                    <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handlePlay(ayah.ayah_number)}
-                                                    className={`action-btn ${playingAyah === ayah.ayah_number ? '!text-[var(--color-primary)] !bg-[var(--color-primary)]/10' : ''}`}
-                                                    title={playingAyah === ayah.ayah_number ? 'Pause' : 'Play Audio'}
-                                                >
-                                                    {playingAyah === ayah.ayah_number ? (
-                                                        <span className="animate-pulse">❚❚</span>
-                                                    ) : (
-                                                        <Play className="w-4 h-4" />
-                                                    )}
-                                                </button>
-                                                <button
-                                                    onClick={() => {
-                                                        setNoteModal({ ayah: ayah.ayah_number, arabic: ayah.arabic_text });
-                                                        setNoteContent('');
-                                                    }}
-                                                    className="action-btn"
-                                                    title="Add Note"
-                                                >
-                                                    <FileText className="w-4 h-4" />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleCopy(ayah)}
-                                                    className="action-btn"
-                                                    title={isCopied ? 'Copied!' : 'Copy'}
-                                                >
-                                                    {isCopied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
-                                                </button>
-                                                <button
-                                                    onClick={() => handleShare(ayah)}
-                                                    className="action-btn"
-                                                    title="Share"
-                                                >
-                                                    <Share2 className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        {/* Arabic Text - ALWAYS SHOWN (Default, cannot be removed) */}
-                                        <p className="font-arabic text-2xl sm:text-3xl md:text-4xl text-[var(--color-text)] text-right leading-loose mb-6" dir="rtl">
-                                            {ayah.arabic_text}
-                                            <span className="inline-block w-8 h-8 mx-2 text-base align-middle text-[var(--color-primary)] rounded-full bg-[var(--color-primary)]/10">
-                                                {`\u06DD${ayah.ayah_number.toLocaleString('ar-SA')}`}
-                                            </span>
-                                        </p>
-
-                                        {/* Translations */}
-                                        <div className="space-y-4 border-t border-[var(--color-border)] pt-4">
-                                            {selectedLanguages.map(langCode => {
-                                                const translation = ayah.translations.find(t => t.language_code === langCode);
-                                                if (!translation) return null;
-                                                const langInfo = LANGUAGES[langCode];
-
-                                                return (
-                                                    <div key={langCode}>
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <span className="text-xs">{langInfo?.flag || '🌐'}</span>
-                                                            <span className="text-xs text-[var(--color-text-muted)]">
-                                                                {langInfo?.name || langCode}
-                                                            </span>
-                                                        </div>
-                                                        <p
-                                                            className={`text-base text-[var(--color-text-secondary)] leading-relaxed ${['ar', 'ur'].includes(langCode) ? 'text-right font-arabic text-xl' : ''
-                                                                }`}
-                                                            dir={['ar', 'ur'].includes(langCode) ? 'rtl' : 'ltr'}
-                                                        >
-                                                            {translation.translation_text}
-                                                        </p>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </motion.div>
-                                );
-                            })}
+                            {ayahs.map((ayah, index) => (
+                                <AyahCard
+                                    key={ayah.id}
+                                    ayah={ayah}
+                                    index={index}
+                                    surahNumber={surahNumber}
+                                    selectedLanguages={selectedLanguages}
+                                    isBookmarked={bookmarkedAyahs.has(`ayah:${surahNumber}:${ayah.ayah_number}`)}
+                                    isPlaying={playingAyah === ayah.ayah_number}
+                                    isHighlighted={highlightedAyah === ayah.ayah_number}
+                                    isCopied={copiedAyah === ayah.ayah_number}
+                                    onBookmark={handleBookmark}
+                                    onPlay={handlePlay}
+                                    onNote={(num, arabic) => {
+                                        setNoteModal({ ayah: num, arabic });
+                                        setNoteContent('');
+                                    }}
+                                    onCopy={handleCopy}
+                                    onShare={handleShare}
+                                    setRef={(el) => {
+                                        if (el) ayahElementsRef.current.set(ayah.ayah_number, el);
+                                    }}
+                                />
+                            ))}
                         </div>
                     </div>
                 </section>

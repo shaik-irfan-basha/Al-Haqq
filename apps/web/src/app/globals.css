@@ -8,48 +8,48 @@
  */
 
 /* ==================
-   CSS Variables - Light Mode (Default)
+   CSS Variables - Dark Mode (Default "Sacred" Aesthetic)
    ================== */
 
 :root {
-  /* Primary Brand Colors */
-  --color-primary: #0E3B2E;
-  --color-primary-light: #1a5c47;
-  --color-primary-lighter: #2a7d62;
+  /* Primary Brand Colors - Emerald Focus */
+  --color-primary: #34d399;
+  --color-primary-light: #6ee7b7;
+  --color-primary-lighter: #a7f3d0;
 
   /* Accent - Antique Gold */
-  --color-accent: #C7A24D;
-  --color-accent-light: #e0c584;
-  --color-accent-dark: #9a7a38;
+  --color-accent: #f0d78c;
+  --color-accent-light: #fae9b3;
+  --color-accent-dark: #C7A24D;
 
-  /* Backgrounds - Warm Paper Tones */
-  --color-bg: #FAFAF8;
-  --color-bg-warm: #F7F6F2;
-  --color-bg-card: #FFFFFF;
-  --color-bg-elevated: #FFFFFF;
+  /* Backgrounds - Deep Night Tones */
+  --color-bg: #0C1210;
+  --color-bg-warm: #111917;
+  --color-bg-card: #161F1C;
+  --color-bg-elevated: #1C2723;
 
   /* Text Colors - High Contrast */
-  --color-text: #1a1a1a;
-  --color-text-secondary: #555555;
-  --color-text-muted: #888888;
-  --color-text-on-primary: #FFFFFF;
+  --color-text: #F5F5F4;
+  --color-text-secondary: #A8B5B0;
+  --color-text-muted: #6B7C75;
+  --color-text-on-primary: #0C1210;
 
   /* Borders */
-  --color-border: #E8E6E1;
-  --color-border-light: #F0EEEA;
+  --color-border: #243530;
+  --color-border-light: #2A3D38;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.08);
-  --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.12);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 32px 64px rgba(0, 0, 0, 0.5);
 
   /* Typography */
   --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
   --font-serif: var(--font-playfair), Georgia, serif;
   --font-arabic: var(--font-amiri), 'Traditional Arabic', serif;
 
-  /* Spacing - Unpacked */
+  /* Spacing */
   --space-section: 160px;
   --space-component: 64px;
 
@@ -64,40 +64,6 @@
   --radius-md: 16px;
   --radius-lg: 24px;
   --radius-xl: 32px;
-}
-
-/* ==================
-   Dark Mode
-   ================== */
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-primary: #34d399;
-    --color-primary-light: #6ee7b7;
-    --color-primary-lighter: #a7f3d0;
-
-    --color-accent: #f0d78c;
-    --color-accent-light: #fae9b3;
-    --color-accent-dark: #c7a24d;
-
-    --color-bg: #0C1210;
-    --color-bg-warm: #111917;
-    --color-bg-card: #161F1C;
-    --color-bg-elevated: #1C2723;
-
-    --color-text: #F5F5F4;
-    --color-text-secondary: #A8B5B0;
-    --color-text-muted: #6B7C75;
-    --color-text-on-primary: #0C1210;
-
-    --color-border: #243530;
-    --color-border-light: #2A3D38;
-
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
-    --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.4);
-    --shadow-xl: 0 32px 64px rgba(0, 0, 0, 0.5);
-  }
 }
 
 /* ==================

@@ -40,7 +40,6 @@ export default function HomePage() {
             <section className="relative min-h-[90vh] flex items-center justify-center pt-32 overflow-hidden">
                 {/* Animated Background */}
                 <div className="absolute inset-0 pointer-events-none">
-                    <ParticlesBackground />
                     <motion.div
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 0.03 }}
