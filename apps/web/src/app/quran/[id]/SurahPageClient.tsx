@@ -35,6 +35,7 @@ const LANGUAGES: Record<string, { name: string; flag: string; native: string }> 
     hi: { name: 'Hindi', flag: '🇮🇳', native: 'हिन्दी' },
     ml: { name: 'Malayalam', flag: '🇮🇳', native: 'മലയാളം' },
     ta: { name: 'Tamil', flag: '🇮🇳', native: 'தமிழ்' },
+    te: { name: 'Telugu', flag: '🇮🇳', native: 'తెలుగు' },
     ur: { name: 'Urdu', flag: '🇵🇰', native: 'اردو' },
 };
 
@@ -199,7 +200,7 @@ export default function SurahPageClient({ params }: { params: { id: string } }) 
     const [surah, setSurah] = React.useState(localSurah);
     const [ayahs, setAyahs] = React.useState<AyahData[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
-    const [selectedLanguages, setSelectedLanguages] = React.useState<string[]>(['en']);
+    const [selectedLanguages, setSelectedLanguages] = React.useState<string[]>(['te', 'en']);
     const [availableTranslators, setAvailableTranslators] = React.useState<TranslatorOption[]>([]);
     const [isLanguageOpen, setIsLanguageOpen] = React.useState(false);
     const [bookmarkedAyahs, setBookmarkedAyahs] = React.useState<Set<string>>(new Set());
@@ -247,6 +248,7 @@ export default function SurahPageClient({ params }: { params: { id: string } }) 
                 };
 
                 const editionsToFetch = langs
+                    .filter(l => l !== 'te') // Handle Telugu separately via Quran.com API
                     .map(l => editionMap[l])
                     .filter(Boolean);
 
@@ -255,14 +257,25 @@ export default function SurahPageClient({ params }: { params: { id: string } }) 
                     fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`).then(r => r.json())
                 ];
 
-                // Fetch each translation
+                // Fetch each translation from AlQuran Cloud
                 editionsToFetch.forEach(edition => {
                     fetchPromises.push(fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/${edition}`).then(r => r.json()));
                 });
 
+                // Fetch Telugu from Quran.com if requested
+                let teluguDataPromise: Promise<any> | null = null;
+                if (langs.includes('te')) {
+                    teluguDataPromise = fetch(`https://api.quran.com/api/v4/quran/translations/227?chapter_number=${surahNumber}`).then(r => r.json());
+                }
+
                 const results = await Promise.all(fetchPromises);
                 const arabicData = results[0];
                 const translationsData = results.slice(1);
+                
+                let teluguData: any = null;
+                if (teluguDataPromise) {
+                    teluguData = await teluguDataPromise;
+                }
 
                 if (arabicData.code === 200) {
                     const arabicAyahs = arabicData.data.ayahs;
@@ -271,6 +284,7 @@ export default function SurahPageClient({ params }: { params: { id: string } }) 
                     const ayahsFormatted: AyahData[] = arabicAyahs.map((a: any, idx: number) => {
                         const ayTranslations: any[] = [];
                         
+                        // Add translations from AlQuran Cloud
                         translationsData.forEach((tData, tIdx) => {
                             if (tData.code === 200) {
                                 const tAyah = tData.data.ayahs[idx];
@@ -294,6 +308,24 @@ export default function SurahPageClient({ params }: { params: { id: string } }) 
                                 }
                             }
                         });
+
+                        // Add Telugu from Quran.com
+                        if (teluguData && teluguData.translations && teluguData.translations[idx]) {
+                            const translatorName = 'Maulana Abder-Rahim ibn Muhammad';
+                            ayTranslations.push({
+                                translator: translatorName,
+                                language_code: 'te',
+                                translation_text: teluguData.translations[idx].text
+                            });
+
+                            if (idx === 0) {
+                                translators.push({
+                                    translator: translatorName,
+                                    language_code: 'te',
+                                    language_name: 'Telugu'
+                                });
+                            }
+                        }
 
                         return {
                             id: a.number,
