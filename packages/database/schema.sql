@@ -4,8 +4,9 @@
 -- ============================================
 
 -- Enable required extensions
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "vector";
+CREATE SCHEMA IF NOT EXISTS extensions;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA extensions;
+CREATE EXTENSION IF NOT EXISTS "vector" SCHEMA extensions;
 
 -- ============================================
 -- QURAN TABLES
@@ -552,7 +553,12 @@ ALTER TABLE surahs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ayahs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE quran_translations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE hadith_books ENABLE ROW LEVEL SECURITY;
+ALTER TABLE hadith_chapters ENABLE ROW LEVEL SECURITY;  -- Added 
 ALTER TABLE hadiths ENABLE ROW LEVEL SECURITY;
+ALTER TABLE quran_words ENABLE ROW LEVEL SECURITY;     -- Added
+ALTER TABLE content_embeddings ENABLE ROW LEVEL SECURITY;  -- Added
+ALTER TABLE tafsir_sources ENABLE ROW LEVEL SECURITY;   -- Added
+ALTER TABLE tafsir_entries ENABLE ROW LEVEL SECURITY;   -- Added
 ALTER TABLE duas ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ai_conversations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ai_messages ENABLE ROW LEVEL SECURITY;
@@ -598,27 +604,68 @@ CREATE POLICY "Public read access" ON quran_translations FOR SELECT USING (true)
 DROP POLICY IF EXISTS "Public read access" ON hadith_books;
 CREATE POLICY "Public read access" ON hadith_books FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Public read access" ON hadith_chapters;
+CREATE POLICY "Public read access" ON hadith_chapters FOR SELECT USING (true);
+
 DROP POLICY IF EXISTS "Public read access" ON hadiths;
 CREATE POLICY "Public read access" ON hadiths FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public read access" ON quran_words;
+CREATE POLICY "Public read access" ON quran_words FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public read access" ON content_embeddings;
+CREATE POLICY "Public read access" ON content_embeddings FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public read access" ON tafsir_sources;
+CREATE POLICY "Public read access" ON tafsir_sources FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public read access" ON tafsir_entries;
+CREATE POLICY "Public read access" ON tafsir_entries FOR SELECT USING (true);
 
 DROP POLICY IF EXISTS "Public read access" ON duas;
 CREATE POLICY "Public read access" ON duas FOR SELECT USING (true);
 
--- AI conversations - public access for MVP (no auth)
-DROP POLICY IF EXISTS "Public access for MVP" ON ai_conversations;
-CREATE POLICY "Public access for MVP" ON ai_conversations FOR ALL USING (true);
+-- AI conversations -- AI specific policies (more restricted)
+DROP POLICY IF EXISTS "Users and anon can manage conversations" ON ai_conversations;
+CREATE POLICY "Users and anon can manage conversations" ON ai_conversations 
+    FOR ALL USING (auth.uid() = user_id OR auth.role() = 'anon');
 
-DROP POLICY IF EXISTS "Public access for MVP" ON ai_messages;
-CREATE POLICY "Public access for MVP" ON ai_messages FOR ALL USING (true);
+DROP POLICY IF EXISTS "Users and anon can manage messages" ON ai_messages;
+CREATE POLICY "Users and anon can manage messages" ON ai_messages 
+    FOR ALL USING (auth.role() = 'authenticated' OR auth.role() = 'anon');
 
--- Basic RLS Policies for User/Auth (Users can only see/edit their own data)
+-- Basic RLS Policies for User/Auth (Users can only-- User data policies (strict row level access)
+DROP POLICY IF EXISTS "Users can read own data" ON users;
+CREATE POLICY "Users can read own data" ON users FOR SELECT USING (auth.uid() = id);
+DROP POLICY IF EXISTS "Users can update own data" ON users;
+CREATE POLICY "Users can update own data" ON users FOR UPDATE USING (auth.uid() = id);
 
--- Users
-DROP POLICY IF EXISTS "Users can view own profile" ON users;
-CREATE POLICY "Users can view own profile" ON users FOR SELECT USING (auth.uid() = id);
+-- Add missing policies for user metrics/logs
+DROP POLICY IF EXISTS "Users manage own study streaks" ON study_streaks;
+CREATE POLICY "Users manage own study streaks" ON study_streaks FOR ALL USING (auth.uid() = user_id);
 
-DROP POLICY IF EXISTS "Users can update own profile" ON users;
-CREATE POLICY "Users can update own profile" ON users FOR UPDATE USING (auth.uid() = id);
+DROP POLICY IF EXISTS "Users manage own prayer logs" ON prayer_logs;
+CREATE POLICY "Users manage own prayer logs" ON prayer_logs FOR ALL USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users manage own charity logs" ON charity_logs;
+CREATE POLICY "Users manage own charity logs" ON charity_logs FOR ALL USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users manage own dhikr logs" ON dhikr_logs;
+CREATE POLICY "Users manage own dhikr logs" ON dhikr_logs FOR ALL USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users manage own memorization" ON memorization_progress;
+CREATE POLICY "Users manage own memorization" ON memorization_progress FOR ALL USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users manage own notification settings" ON notification_settings;
+CREATE POLICY "Users manage own notification settings" ON notification_settings FOR ALL USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users manage own 2fa" ON user_2fa;
+CREATE POLICY "Users manage own 2fa" ON user_2fa FOR ALL USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users manage own audit logs" ON audit_logs;
+CREATE POLICY "Users can manage own audit logs" ON audit_logs FOR ALL USING (auth.uid() = user_id);
+
+-- Rest of user specific policies
 
 -- Collections
 DROP POLICY IF EXISTS "Users can view own collections" ON collections;

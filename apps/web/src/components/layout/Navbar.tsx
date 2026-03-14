@@ -127,12 +127,12 @@ export default function Navbar() {
                             <div className="flex items-center gap-6">
                                 <Link href="/" className="flex items-center gap-3 group relative z-10">
                                     <motion.div
-                                        whileHover={{ scale: 1.05, rotate: 5 }}
+                                        whileHover={{ scale: 1.05, rotate: 2 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-light)] flex items-center justify-center shadow-lg shadow-[var(--color-primary)]/20 text-white relative overflow-hidden"
+                                        className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-light)] flex items-center justify-center shadow-lg shadow-[var(--color-primary)]/20 relative overflow-hidden"
                                     >
                                         <div className="absolute inset-0 bg-gradient-to-tr from-black/10 to-transparent" />
-                                        <span className="relative font-arabic text-xl font-bold leading-none pb-1">ح</span>
+                                        <img src="/logo.png" alt="Al-Haqq Logo" className="w-full h-full object-cover rounded-xl" />
                                     </motion.div>
                                     <div className="flex flex-col">
                                         <span className="font-serif text-xl font-semibold text-[var(--color-text)] tracking-tight group-hover:text-[var(--color-primary)] transition-colors">
