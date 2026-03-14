@@ -129,7 +129,11 @@ const HadithCard = React.memo(({
                         </p>
                     )}
                     <p className="text-[var(--color-text)] leading-relaxed text-lg">
-                        {hadith.english_text}
+                        {hadith.english_text || (
+                            <span className="text-[var(--color-text-muted)] italic text-sm">
+                                English translation for this hadith is currently unavailable in the database.
+                            </span>
+                        )}
                     </p>
                 </div>
             </div>

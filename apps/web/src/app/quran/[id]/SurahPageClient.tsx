@@ -35,7 +35,6 @@ const LANGUAGES: Record<string, { name: string; flag: string; native: string }> 
     hi: { name: 'Hindi', flag: '🇮🇳', native: 'हिन्दी' },
     ml: { name: 'Malayalam', flag: '🇮🇳', native: 'മലയാളം' },
     ta: { name: 'Tamil', flag: '🇮🇳', native: 'தமிழ்' },
-    te: { name: 'Telugu', flag: '🇮🇳', native: 'తెలుగు' },
     ur: { name: 'Urdu', flag: '🇵🇰', native: 'اردو' },
 };
 
@@ -245,7 +244,6 @@ export default function SurahPageClient({ params }: { params: { id: string } }) 
                     ur: 'ur.jalandhry',
                     ml: 'ml.abdulhameed',
                     ta: 'ta.tamil',
-                    te: 'te.telugu',
                 };
 
                 const editionsToFetch = langs
@@ -314,6 +312,7 @@ export default function SurahPageClient({ params }: { params: { id: string } }) 
         }
 
         async function fetchData() {
+            setIsLoading(true);
             try {
                 // Try Supabase first
                 if (isSupabaseConfigured()) {
@@ -418,19 +417,15 @@ export default function SurahPageClient({ params }: { params: { id: string } }) 
         });
     };
 
-    // Get unique languages available
+    // Get all supported languages except Arabic
     const availableLanguages = React.useMemo(() => {
-        const langs = new Map<string, { code: string; info: typeof LANGUAGES['en'] }>();
-        availableTranslators.forEach(t => {
-            if (!langs.has(t.language_code)) {
-                langs.set(t.language_code, {
-                    code: t.language_code,
-                    info: LANGUAGES[t.language_code] || { name: t.language_code, flag: '🌐', native: t.language_code }
-                });
-            }
-        });
-        return Array.from(langs.values());
-    }, [availableTranslators]);
+        return Object.entries(LANGUAGES)
+            .filter(([code]) => code !== 'ar' && code !== 'all')
+            .map(([code, info]) => ({
+                code,
+                info
+            }));
+    }, []);
 
     // Handle bookmark toggle
     const handleBookmark = async (ayahNumber: number) => {
@@ -672,8 +667,18 @@ export default function SurahPageClient({ params }: { params: { id: string } }) 
                 </section>
             )}
 
-            {/* Loading */}
-            {isLoading && (
+            {/* Loading Overlay when fetching new translations */}
+            {isLoading && ayahs.length > 0 && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/20 backdrop-blur-[2px]">
+                    <div className="bg-[var(--color-bg-card)] p-6 rounded-2xl shadow-2xl flex items-center gap-4 border border-[var(--color-border)]">
+                        <Loader2 className="w-6 h-6 text-[var(--color-primary)] animate-spin" />
+                        <p className="text-sm font-medium">Updating translations...</p>
+                    </div>
+                </div>
+            )}
+
+            {/* Loading Initial */}
+            {isLoading && ayahs.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-20">
                     <Loader2 className="w-8 h-8 text-[var(--color-primary)] animate-spin mb-4" />
                     <p className="text-[var(--color-text-muted)]">Loading Surah...</p>
