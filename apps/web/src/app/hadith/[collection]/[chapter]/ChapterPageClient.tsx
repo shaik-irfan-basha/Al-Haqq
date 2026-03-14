@@ -25,6 +25,16 @@ interface ChapterInfo {
     english_title: string;
 }
 
+// Manual patches for missing data in public APIs
+const HADITH_PATCHES: Record<string, Record<number, Partial<HadithData>>> = {
+    'ahmed': {
+        1364: {
+            english_text: "It was narrated from Jareer bin Hayyan from his father that ‘Ali (رضي الله عنه) said: I shall send you on the same mission as the Messenger of Allah (ﷺ) sent me. Level every grave and destroy every idol.",
+            english_narrator: "Narrated by ‘Ali bin Abi Talib"
+        }
+    }
+};
+
 // Bookmarks storage
 const BOOKMARKS_KEY = 'alhaqq_bookmarks';
 const getBookmarks = (): string[] => {
@@ -171,7 +181,6 @@ export default function ChapterPageClient({ params }: { params: { collection: st
     React.useEffect(() => {
         async function fetchFromPublicAPI() {
             try {
-                // Map local slugs to fawazahmed0/hadith-api editions
                 const bookMap: Record<string, string> = {
                     'bukhari': 'bukhari',
                     'muslim': 'muslim',
@@ -185,37 +194,63 @@ export default function ChapterPageClient({ params }: { params: { collection: st
                 };
 
                 const bookSlug = bookMap[params.collection] || params.collection;
+                const chNum = parseInt(params.chapter);
                 
-                // Fetch English and Arabic in parallel
-                const [engRes, araRes] = await Promise.all([
-                    fetch(`https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/eng-${bookSlug}.json`),
-                    fetch(`https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/ara-${bookSlug}.json`)
-                ]);
+                // Try to fetch granular sections first (faster, only ~100kb each)
+                // Note: editions like bukhari, muslim, nasai usually have sections
+                let engData, araData;
+                
+                try {
+                    // Optimized fetching using segments/sections
+                    const [engSecRes, araSecRes] = await Promise.all([
+                        fetch(`https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/eng-${bookSlug}/sections/${chNum}.json`),
+                        fetch(`https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/ara-${bookSlug}/sections/${chNum}.json`)
+                    ]);
 
-                if (!engRes.ok) throw new Error('API fetch failed');
-                
-                const engData = await engRes.json();
-                const araData = araRes.ok ? await araRes.json() : { hadiths: [] };
+                    if (engSecRes.ok) {
+                        engData = await engSecRes.json();
+                        araData = araSecRes.ok ? await araSecRes.json() : { hadiths: [] };
+                    }
+                } catch (secError) {
+                    console.warn('Granular fetch failed, falling back to bulk load...', secError);
+                }
+
+                // Fallback to bulk load if sections not available (for Ahmed, Darimi etc)
+                if (!engData) {
+                    const [engRes, araRes] = await Promise.all([
+                        fetch(`https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/eng-${bookSlug}.min.json`),
+                        fetch(`https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/ara-${bookSlug}.min.json`)
+                    ]);
+
+                    if (!engRes.ok) throw new Error('API fetch failed');
+                    engData = await engRes.json();
+                    araData = araRes.ok ? await araRes.json() : { hadiths: [] };
+                }
 
                 if (engData.hadiths) {
-                    const chNum = parseInt(params.chapter);
-                    // Filter hadiths for this chapter
                     const filteredHadiths = engData.hadiths
                         .filter((h: any) => h.chapterNumber == chNum || h.reference?.book == chNum)
-                        .map((h: any, idx: number) => ({
-                            id: idx,
-                            hadith_number: h.hadithnumber || h.hadith_number || (idx + 1),
-                            arabic_text: araData.hadiths?.[idx]?.text || '',
-                            english_text: h.text,
-                            english_narrator: h.narrator || '',
-                            grade: h.grades?.[0]?.grade || '',
-                            reference: `${engData.metadata.name} ${h.hadithnumber || h.hadith_number || ''}`
-                        }));
+                        .map((h: any, idx: number) => {
+                            const hadithNumber = h.hadithnumber || h.hadith_number || (idx + 1);
+                            
+                            // Apply manual patches if available
+                            const patch = HADITH_PATCHES[params.collection]?.[hadithNumber];
+                            
+                            return {
+                                id: idx,
+                                hadith_number: hadithNumber,
+                                arabic_text: araData.hadiths?.[idx]?.text || '',
+                                english_text: patch?.english_text || h.text,
+                                english_narrator: patch?.english_narrator || h.narrator || '',
+                                grade: h.grades?.[0]?.grade || '',
+                                reference: `${engData.metadata?.name || bookSlug} ${hadithNumber}`
+                            };
+                        });
 
                     if (filteredHadiths.length > 0) {
                         setHadiths(filteredHadiths);
-                        setBookName(engData.metadata.name);
-                        setBookArabicName(araData.metadata.name || '');
+                        setBookName(engData.metadata?.name || localCollection?.englishName || bookSlug);
+                        setBookArabicName(araData.metadata?.name || localCollection?.arabicName || '');
                         setChapter({
                             id: chNum,
                             chapter_number: chNum,

@@ -40,58 +40,97 @@ export default function HadithBookPageClient({ params }: { params: { collection:
 
     // Fetch book and chapters from database
     React.useEffect(() => {
-        async function fetchData() {
-            if (!isSupabaseConfigured()) {
-                setIsLoading(false);
-                return;
-            }
-
+        async function fetchFromPublicAPI() {
             try {
-                // Fetch book info
-                const { data: bookData } = await supabase
-                    .from('hadith_books')
-                    .select('*')
-                    .eq('slug', params.collection)
-                    .single();
-
-                if (bookData) {
-                    setBook({
-                        id: bookData.slug,
-                        arabicName: bookData.arabic_title,
-                        englishName: bookData.english_title,
-                        author: bookData.author_english || bookData.author_arabic || 'Unknown',
-                        totalHadiths: bookData.total_hadiths || 0,
-                        description: bookData.description || ''
-                    });
-
-                    // Fetch chapters
-                    const { data: chaptersData } = await supabase
-                        .from('hadith_chapters')
-                        .select('*')
-                        .eq('book_id', bookData.id)
-                        .order('chapter_number');
-
-                    if (chaptersData && chaptersData.length > 0) {
-                        // Get hadith count per chapter
-                        const chaptersWithCount = await Promise.all(
-                            chaptersData.map(async (chapter) => {
-                                const { count } = await supabase
-                                    .from('hadiths')
-                                    .select('*', { count: 'exact', head: true })
-                                    .eq('chapter_id', chapter.id);
-
-                                return {
-                                    ...chapter,
-                                    hadith_count: count || 0
-                                };
-                            })
-                        );
-                        setChapters(chaptersWithCount);
-                        setUsingDatabase(true);
+                const bookMap: Record<string, string> = {
+                    'bukhari': 'bukhari',
+                    'muslim': 'muslim',
+                    'abudawud': 'abudawud',
+                    'tirmidhi': 'tirmidhi',
+                    'nasai': 'nasai',
+                    'ibnmajah': 'ibnmajah',
+                    'malik': 'malik',
+                    'ahmed': 'ahmed',
+                    'darimi': 'darimi',
+                };
+                const bookSlug = bookMap[params.collection] || params.collection;
+                
+                // Fetch info.json to get chapter mapping (sections)
+                const infoRes = await fetch(`https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/eng-${bookSlug}/info.json`);
+                if (infoRes.ok) {
+                    const infoData = await infoRes.json();
+                    if (infoData.metadata?.sections) {
+                        const chapterList = Object.entries(infoData.metadata.sections).map(([num, name]: [string, any]) => ({
+                            id: parseInt(num),
+                            chapter_number: parseInt(num),
+                            english_title: typeof name === 'string' ? name : (name.english || `Chapter ${num}`),
+                            arabic_title: typeof name === 'object' ? name.arabic : ''
+                        }));
+                        setChapters(chapterList);
+                        setUsingDatabase(false);
                     }
                 }
             } catch (err) {
-                console.log('Using sample data fallback');
+                console.error('Book API Fallback Error:', err);
+            }
+        }
+
+        async function fetchData() {
+            setIsLoading(true);
+            try {
+                if (isSupabaseConfigured()) {
+                    // Fetch book info
+                    const { data: bookData } = await supabase
+                        .from('hadith_books')
+                        .select('*')
+                        .eq('slug', params.collection)
+                        .single();
+
+                    if (bookData) {
+                        setBook({
+                            id: bookData.slug,
+                            arabicName: bookData.arabic_title,
+                            englishName: bookData.english_title,
+                            author: bookData.author_english || bookData.author_arabic || 'Unknown',
+                            totalHadiths: bookData.total_hadiths || 0,
+                            description: bookData.description || ''
+                        });
+
+                        // Fetch chapters
+                        const { data: chaptersData } = await supabase
+                            .from('hadith_chapters')
+                            .select('*')
+                            .eq('book_id', bookData.id)
+                            .order('chapter_number');
+
+                        if (chaptersData && chaptersData.length > 0) {
+                            // Get hadith count per chapter - using head:true for efficiency
+                            const chaptersWithCount = await Promise.all(
+                                chaptersData.map(async (chapter) => {
+                                    const { count } = await supabase
+                                        .from('hadiths')
+                                        .select('*', { count: 'exact', head: true })
+                                        .eq('chapter_id', chapter.id);
+
+                                    return {
+                                        ...chapter,
+                                        hadith_count: count || 0
+                                    };
+                                })
+                            );
+                            setChapters(chaptersWithCount);
+                            setUsingDatabase(true);
+                            setIsLoading(false);
+                            return;
+                        }
+                    }
+                }
+                
+                // Fallback to Public API
+                await fetchFromPublicAPI();
+            } catch (err) {
+                console.warn('Database fetch failed, calling API fallback');
+                await fetchFromPublicAPI();
             } finally {
                 setIsLoading(false);
             }

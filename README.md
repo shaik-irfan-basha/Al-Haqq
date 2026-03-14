@@ -6,7 +6,7 @@
 
 > *"And say: My Lord, increase me in knowledge."* — Qur'an 20:114
 
-[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-al--haqq.vercel.app-0E3B2E?style=for-the-badge)](https://al-haqq.vercel.app)
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-al--haqq-0E3B2E?style=for-the-badge)](https://al-haqq-official.netlify.app)
 [![Next.js](https://img.shields.io/badge/Next.js_14-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org)
 [![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
